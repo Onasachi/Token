@@ -1,58 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+// Compatible with OpenZeppelin Contracts ^5.0.0
+pragma solidity ^0.8.20;
 
-interface IERC20 {
-    function totalSupply() external view returns (uint);
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-    function balanceOf(address account) external view returns (uint);
+contract Staking is ERC20, ERC20Burnable, Ownable {
+    constructor(address initialOwner)
+        ERC20("Staking", "STK")
+        Ownable(initialOwner)
+    {}
 
-    function transfer(address recipient, uint amount) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint value);
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
 }
-
-contract ERC20 is IERC20 {
-    address private owner;
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint public totalSupply;
-    mapping(address => uint) public balanceOf;
-
-    constructor(address _owner, string memory _name, string memory _symbol, uint8 _decimals) {
-        owner = _owner;
-        name = _name;
-        symbol = _symbol;
-        decimals = _decimals;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can mint tokens");
-        _;
-    }
-
-    function mint(uint _initialSupply) external onlyOwner {
-        totalSupply = _initialSupply * 10**uint256(decimals);
-        balanceOf[owner] += totalSupply;
-        emit Transfer(address(0), msg.sender, totalSupply);
-    }
-
-    function transfer(address recipient, uint amount) external override returns (bool) {
-        require(recipient != address(0), " Zero address can not transfer Token");
-        balanceOf[owner] -= amount;
-        balanceOf[recipient] += amount;
-        emit Transfer(msg.sender, recipient, amount);
-        return true;
-    }
-
-    function burn(uint amount) external {
-        require(balanceOf[owner] >= amount, "burn amount exceeds balance");
-        balanceOf[owner] -= amount;
-        totalSupply -= amount;
-        emit Transfer(msg.sender, address(0), amount);
-    }
-
-    
-}
-
- 
