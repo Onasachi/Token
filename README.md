@@ -86,7 +86,7 @@ Burns `amount` tokens from the `from` account, decreasing the total supply. This
 #### `mint`
 
 ```solidity
-function mint(address to, uint256 amount) external
+function mint(address to, uint256 amount) external Onlyowner
 ```
 Calls the internal `_mint` function to mint `amount` tokens to the `to` account.
 
