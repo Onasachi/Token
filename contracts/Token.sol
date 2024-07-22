@@ -75,11 +75,17 @@ contract ERC20 is IERC20 {
         emit Transfer(from, address(0), amount);
     }
 
-    function mint(address to, uint256 amount) external {
+    function mint(address to, uint256 amount) external  Onlyowner{
         _mint(to, amount);
     }
 
     function burn(address from, uint256 amount) external {
         _burn(from, amount);
+    }
+
+    modifier Onlyowner {
+        require(owner == msg.owner, "Only msg.sender can mint tokens");
+        _;
+        
     }
 }
